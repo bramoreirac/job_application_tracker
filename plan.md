@@ -138,14 +138,18 @@ CORS allows exact frontend origins and Authorization/Content-Type; this token fl
 ## Milestones / small learning sprints
 
 ### 1. Setup and first request
-- [ ] Inspect existing repository/AGENTS.md; create separate workspace for this project.
-- [ ] Confirm Python, Node LTS, Git and free account availability.
-- [ ] Create virtual environment, Django project, DRF setup, and React frontend.
-- [ ] Explain settings.py, urls.py, manage.py, project versus app.
-- [ ] Implement /api/health/ and fetch it from React locally.
+- [x] Inspect existing repository/AGENTS.md; create separate workspace for this project.
+- [x] Confirm local Python, Node, npm, and Git versions.
+- [ ] Confirm free account availability before provisioning hosted services.
+- [x] Create virtual environment, Django project, DRF setup, and React frontend.
+- [x] Explain settings.py, urls.py, manage.py, project versus app.
+- [x] Implement /api/health/ and fetch it from React locally.
 
 ### 2. ORM and migrations
-- [ ] Create Application model and initial migration.
+- [x] Create and register the applications Django app.
+- [x] Draft Application fields for UUID, owner, job details, work mode, and status.
+- [ ] Add applied_on, created_at, updated_at, indexes, and ordering to Application.
+- [ ] Create and inspect the initial Application migration.
 - [ ] Run migrate, inspect with Django shell and optional admin locally.
 - [ ] Demonstrate create/filter/update/delete using ORM with synthetic records.
 - [ ] Explain makemigrations versus migrate; inspect migration files.
@@ -176,7 +180,8 @@ CORS allows exact frontend origins and Authorization/Content-Type; this token fl
 - [ ] Create/configure Supabase Free project, disable unused Data API safely.
 - [ ] Configure PostgreSQL URL/SSL and run migrations against intended fresh database.
 - [ ] Verify PostgreSQL integration, ownership, persistence, and public-data isolation.
-- [ ] Push source without secrets to GitHub.
+- [x] Push current source to GitHub; local .env, SQLite, virtual environment, and caches are excluded from current files.
+- [ ] Before deployment, review repository history and use a fresh production key; an early commit contains a retired local development key.
 - [ ] Configure Render Free root backend/, pinned Python runtime, install dependencies, collectstatic with WhiteNoise if admin is used.
 - [ ] Run migrate as a documented one-time controlled step. If Free lacks release/shell hooks, use the provider-supported build step for this single-instance learning deployment; do not assume paid pre-deploy hooks are available. Explain this limited migration strategy and avoid overlapping deployments.
 - [ ] Start Gunicorn config.wsgi:application bound to 0.0.0.0:$PORT with a small worker budget. Windows local development uses runserver, not Gunicorn.
