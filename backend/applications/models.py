@@ -26,6 +26,15 @@ class Application(models.Model):
     job_url = models.URLField(blank=True, max_length=500)
     location = models.CharField(blank=True, max_length=120)
     notes = models.TextField(blank=True)
-
     work_mode = models.CharField(choices=WorkMode.choices, default=WorkMode.REMOTE, max_length=10)
     status = models.CharField(choices=Status.choices, default=Status.SAVED, max_length=14)
+    applied_on = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["owner", "status"]),
+            models.Index(fields=["owner", "created_at"])
+        ]
+        ordering = ["-created_at", "-id"]
