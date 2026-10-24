@@ -148,11 +148,11 @@ CORS allows exact frontend origins and Authorization/Content-Type; this token fl
 ### 2. ORM and migrations
 - [x] Create and register the applications Django app.
 - [x] Draft Application fields for UUID, owner, job details, work mode, and status.
-- [ ] Add applied_on, created_at, updated_at, indexes, and ordering to Application.
-- [ ] Create and inspect the initial Application migration.
-- [ ] Run migrate, inspect with Django shell and optional admin locally.
-- [ ] Demonstrate create/filter/update/delete using ORM with synthetic records.
-- [ ] Explain makemigrations versus migrate; inspect migration files.
+- [x] Add applied_on, created_at, updated_at, indexes, and ordering to Application.
+- [x] Create and inspect the initial Application migration.
+- [x] Run migrate and inspect the local SQLite table with Django shell (admin optional).
+- [x] Demonstrate create/filter/update/delete using ORM with synthetic records.
+- [x] Explain makemigrations versus migrate; inspect migration files.
 
 ### 3. Django authentication
 - [ ] Implement registration with Django password validation/create_user.

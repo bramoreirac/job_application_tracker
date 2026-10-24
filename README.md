@@ -5,8 +5,8 @@ A private job application tracker built step by step with React and Django. The 
 ## Current status
 
 - **Stage 1 complete:** Django REST Framework serves `GET /api/health/`, and the React page fetches it and displays the backend status. Local CORS allows `http://localhost:5173`.
-- **Stage 2 in progress:** the `applications` app has a draft `Application` model with a UUID, owner, company, role, URL, location, notes, work mode, and status. The date fields, indexes, ordering, and initial migration are still pending.
-- Authentication, application CRUD, search, filters, tests, hosted PostgreSQL, and deployment are not implemented yet.
+- **Stage 2 complete:** the `applications` app has an `Application` model, an initial migration applied to local SQLite, and a completed synthetic ORM create/filter/update/delete exercise.
+- **Stage 3 next:** authentication has not been implemented. Application API CRUD, search, filters, tests, hosted PostgreSQL, and deployment are also pending.
 
 ## Stack
 
@@ -14,7 +14,7 @@ A private job application tracker built step by step with React and Django. The 
 | --- | --- |
 | Frontend | React, Vite, JavaScript |
 | Backend | Python, Django 5.2, Django REST Framework |
-| Local database | SQLite (application migrations not run yet) |
+| Local database | SQLite with the initial application migration |
 | Planned hosting | Vercel Hobby, Render Free, Supabase Free PostgreSQL |
 
 ## Run locally on Windows PowerShell
@@ -33,10 +33,11 @@ Replace the placeholder `DJANGO_SECRET_KEY` in `backend/.env` with a newly gener
 
 ```powershell
 .\.venv\Scripts\python.exe manage.py check
+.\.venv\Scripts\python.exe manage.py migrate
 .\.venv\Scripts\python.exe manage.py runserver
 ```
 
-Open `http://127.0.0.1:8000/api/health/` to see `{"status":"ok"}`. Database migrations are intentionally deferred until the model is complete.
+Open `http://127.0.0.1:8000/api/health/` to see `{"status":"ok"}`. `migrate` creates the local database tables from the committed migrations; local SQLite data is not committed.
 
 **Frontend terminal, from `frontend/`:**
 
