@@ -50,3 +50,9 @@ def user_me(request):
     }
 
     return Response(response_data, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+def logout_view(request):
+    request.auth.delete()
+
+    return Response(status=status.HTTP_204_NO_CONTENT)

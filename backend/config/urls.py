@@ -20,11 +20,13 @@ from .views import health
 from accounts.views import register
 from accounts.views import login_view
 from accounts.views import user_me
+from accounts.views import logout_view
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/health/", health, name="health"),
     path("api/auth/register/", register, name="register"),
     path("api/auth/login/", login_view, name="login"),
-    path("api/auth/me/", user_me, name="me")
+    path("api/auth/me/", user_me, name="me"),
+    path("api/auth/logout/", logout_view, name="logout")
 ]
