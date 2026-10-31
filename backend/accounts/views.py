@@ -39,3 +39,14 @@ def login_view(request):
             {"token": token.key},
             status=status.HTTP_200_OK
         )
+
+@api_view(["GET"])
+def user_me(request):
+    user = request.user
+    response_data = {
+        "id": user.id,
+        "username": user.username,
+        "email": user.email
+    }
+
+    return Response(response_data, status=status.HTTP_200_OK)
