@@ -32,3 +32,8 @@ class RegisterSerializer(serializers.Serializer):
         if get_user_model().objects.filter(username=value).exists():
             raise serializers.ValidationError("Username is taken.")
         return value
+
+    def create(self, validated_data):
+        validated_data.pop("password_confirm")
+        password = validated_data.pop("password")
+        return get_user_model().objects.create_user(password=password, **validated_data)
