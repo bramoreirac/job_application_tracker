@@ -7,4 +7,3 @@ from rest_framework.response import Response
 def health(request):
     response_data = {"status": "ok"}
     return Response(response_data)
-
