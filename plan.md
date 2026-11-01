@@ -155,10 +155,16 @@ CORS allows exact frontend origins and Authorization/Content-Type; this token fl
 - [x] Explain makemigrations versus migrate; inspect migration files.
 
 ### 3. Django authentication
-- [ ] Implement registration with Django password validation/create_user.
-- [ ] Implement token login, /me, logout, protected defaults.
-- [ ] Build login/register and protected frontend dashboard.
-- [ ] Verify bad credentials, missing tokens, logout invalidation, reload behavior.
+- [x] Implement registration with Django password validation/create_user.
+- [x] Implement token login, /me, logout, and protected defaults.
+- [x] Exercise registration, login, /me, missing or invalid tokens, and logout invalidation locally with synthetic data.
+- [x] Add a React login form and logout handler with the token held in memory; install React Router and wrap the app in BrowserRouter.
+- [ ] Configure /login, /register, and protected /applications routes; build registration and the protected frontend dashboard.
+- [ ] Verify frontend invalid-credential feedback, login/logout after the component refactor, and reload behavior.
+- [x] Align the login response and invalid-credentials status with the planned API contract.
+- [ ] Add authentication throttling.
+- [x] Add automated tests for the login response and generic login errors.
+- [ ] Extend authentication tests to cover registration and token invalidation.
 
 ### 4. DRF CRUD
 - [ ] Write serializer and result-state validation.

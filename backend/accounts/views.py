@@ -31,12 +31,20 @@ def login_view(request):
     if user is None:
         return Response(
             {"detail": "Invalid credentials"},
-            status=status.HTTP_400_BAD_REQUEST
+            status=status.HTTP_401_UNAUTHORIZED,
+            headers={"WWW-Authenticate": "Token"},
         )
     else:
         token, created = Token.objects.get_or_create(user=user)
         return Response(
-            {"token": token.key},
+            {
+                "token": token.key,
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                },
+            },
             status=status.HTTP_200_OK
         )
 

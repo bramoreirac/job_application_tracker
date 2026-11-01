@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import Login from './pages/Login.jsx'
 
 function App() {
   const [health, setHealth] = useState('Checking API…')
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
+  const [token, setToken] = useState(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -21,15 +26,62 @@ function App() {
         if (error.name !== 'AbortError') setHealth('API unavailable')
       }
     }
-
     checkHealth()
     return () => controller.abort()
   }, [])
+
+  const handleLogout = async () => {
+    setError('')
+    setIsSubmitting(true)
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/logout/`,
+        {
+          method: 'POST',
+          headers: { Authorization: `Token ${token}` },
+        },
+      )
+
+      if (!response.ok && response.status !== 401) {
+        setError('Unable to sign out. Please try again.')
+        return
+      }
+
+      setToken(null)
+      setMessage(response.status === 401
+        ? 'Your session has ended. Please sign in again.'
+        : 'Signed out successfully.')
+    } catch {
+      setError('Unable to reach the server. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <main className="health-page">
       <h1>Job Application Tracker</h1>
       <p>Backend status: <strong>{health}</strong></p>
+
+      {token ? (
+        <>
+          <p role="status">{message}</p>
+          {error && <p role="alert">{error}</p>}
+          <button className="logout-button" type="button" onClick={handleLogout} disabled={isSubmitting}>
+            {isSubmitting ? 'Signing out…' : 'Sign out'}
+          </button>
+        </>
+      ) : (
+        <Login
+          message={message}
+          setMessage={setMessage}
+          onLogin={(newToken) => {
+            setToken(newToken)
+            setMessage('Signed in successfully.')
+          }}
+        />
+      )}
     </main>
   )
 }

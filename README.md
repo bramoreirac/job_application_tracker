@@ -6,13 +6,14 @@ A private job application tracker built step by step with React and Django. The 
 
 - **Stage 1 complete:** Django REST Framework serves `GET /api/health/`, and the React page fetches it and displays the backend status. Local CORS allows `http://localhost:5173`.
 - **Stage 2 complete:** the `applications` app has an `Application` model, an initial migration applied to local SQLite, and a completed synthetic ORM create/filter/update/delete exercise.
-- **Stage 3 next:** authentication has not been implemented. Application API CRUD, search, filters, tests, hosted PostgreSQL, and deployment are also pending.
+- **Stage 3 in progress:** Django registration, token login, current-user, and logout endpoints are implemented with protected API defaults. A React login form and logout handler exist; React Router is installed, but the separate routes, registration page, and protected dashboard are still to be built.
+- Local API checks covered registration and token invalidation, and focused automated tests cover the login contract. Frontend login was exercised before the latest component refactor; login/logout and reload behavior still need a browser check. Additional authentication tests, application API CRUD, search, filters, hosted PostgreSQL, and deployment remain pending.
 
 ## Stack
 
 | Part | Current choice |
 | --- | --- |
-| Frontend | React, Vite, JavaScript |
+| Frontend | React, Vite, JavaScript, React Router (routes pending) |
 | Backend | Python, Django 5.2, Django REST Framework |
 | Local database | SQLite with the initial application migration |
 | Planned hosting | Vercel Hobby, Render Free, Supabase Free PostgreSQL |
@@ -47,12 +48,24 @@ Copy-Item .env.example .env.local
 npm run dev
 ```
 
-Open `http://localhost:5173`. The page should show **Backend status: ok**. The example Vite variable contains only the public API address; never put a database password or authentication token in a `VITE_` variable.
+Open `http://localhost:5173`. The page should show **Backend status: ok** and a sign-in form. Create a local account through the registration endpoint to use the form; the registration page is not built yet. The example Vite variable contains only the public API address; never put a database password or authentication token in a `VITE_` variable. If PowerShell blocks `npm.ps1`, use `npm.cmd ci` and `npm.cmd run dev`.
+
+## Current authentication API
+
+| Method | Endpoint | Current behavior |
+| --- | --- | --- |
+| GET | `/api/health/` | Public health response |
+| POST | `/api/auth/register/` | Validates username, optional email, password and confirmation; creates a user and returns public user fields with 201 |
+| POST | `/api/auth/login/` | Returns `{token, user}` with 200, or a generic 401 for invalid credentials |
+| GET | `/api/auth/me/` | Returns the authenticated user's public fields; missing or invalid token returns 401 |
+| POST | `/api/auth/logout/` | Deletes the token and returns an empty 204 |
+
+Protected requests use `Authorization: Token <value>`. The React client holds the token in memory, so a full reload requires another login. Reloading does not revoke the server token; logout does. DRF's standard token has no automatic expiry and is shared across a user's sessions, so logout invalidates it for those sessions too.
 
 ## Repository layout
 
 ```text
-backend/    Django project and applications app
+backend/    Django project, accounts app, and applications app
 frontend/   React/Vite client
 plan.md     Scope, API contract, and milestones
 ```
