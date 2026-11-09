@@ -6,14 +6,15 @@ A private job application tracker built step by step with React and Django. The 
 
 - **Stage 1 complete:** Django REST Framework serves `GET /api/health/`, and the React page fetches it and displays the backend status. Local CORS allows `http://localhost:5173`.
 - **Stage 2 complete:** the `applications` app has an `Application` model, an initial migration applied to local SQLite, and a completed synthetic ORM create/filter/update/delete exercise.
-- **Stage 3 in progress:** Django registration, token login, current-user, and logout endpoints are implemented with protected API defaults. A React login form and logout handler exist; React Router is installed, but the separate routes, registration page, and protected dashboard are still to be built.
-- Local API checks covered registration and token invalidation, and focused automated tests cover the login contract. Frontend login was exercised before the latest component refactor; login/logout and reload behavior still need a browser check. Additional authentication tests, application API CRUD, search, filters, hosted PostgreSQL, and deployment remain pending.
+- **Stage 3 in progress:** Django registration, token login, current-user, and logout endpoints are implemented with protected API defaults. React has login and registration pages, plus a protected `/applications` route with a signed-in placeholder and logout.
+- Local API and browser checks covered registration, login, logout, route redirects, and token invalidation. Focused automated tests cover the login contract. Browser reload behavior, additional authentication tests, and authentication throttling remain to be verified or implemented.
+- Application API CRUD and the tracker dashboard, search, filters, hosted PostgreSQL, and deployment are still to be built.
 
 ## Stack
 
 | Part | Current choice |
 | --- | --- |
-| Frontend | React, Vite, JavaScript, React Router (routes pending) |
+| Frontend | React, Vite, JavaScript, React Router |
 | Backend | Python, Django 5.2, Django REST Framework |
 | Local database | SQLite with the initial application migration |
 | Planned hosting | Vercel Hobby, Render Free, Supabase Free PostgreSQL |
@@ -48,7 +49,7 @@ Copy-Item .env.example .env.local
 npm run dev
 ```
 
-Open `http://localhost:5173`. The page should show **Backend status: ok** and a sign-in form. Create a local account through the registration endpoint to use the form; the registration page is not built yet. The example Vite variable contains only the public API address; never put a database password or authentication token in a `VITE_` variable. If PowerShell blocks `npm.ps1`, use `npm.cmd ci` and `npm.cmd run dev`.
+Open `http://localhost:5173`. The page should show **Backend status: ok** and redirect to the sign-in form. Use **Create an account** to register a local user, then return to sign in. The protected applications page currently shows a signed-in message and logout button; job tracking is not implemented yet. The example Vite variable contains only the public API address; never put a database password or authentication token in a `VITE_` variable. If PowerShell blocks `npm.ps1`, use `npm.cmd ci` and `npm.cmd run dev`.
 
 ## Current authentication API
 

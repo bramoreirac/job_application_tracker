@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router'
 
 function Login({ message, setMessage, onLogin }) {
   const [username, setUsername] = useState('')
@@ -66,6 +67,7 @@ function Login({ message, setMessage, onLogin }) {
       <button type="submit" disabled={isSubmitting}>
         {isSubmitting ? 'Signing in…' : 'Sign in'}
       </button>
+      <Link to="/register">Create an account</Link>
     </form>
   )
 }

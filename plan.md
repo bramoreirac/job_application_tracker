@@ -159,8 +159,10 @@ CORS allows exact frontend origins and Authorization/Content-Type; this token fl
 - [x] Implement token login, /me, logout, and protected defaults.
 - [x] Exercise registration, login, /me, missing or invalid tokens, and logout invalidation locally with synthetic data.
 - [x] Add a React login form and logout handler with the token held in memory; install React Router and wrap the app in BrowserRouter.
-- [ ] Configure /login, /register, and protected /applications routes; build registration and the protected frontend dashboard.
-- [ ] Verify frontend invalid-credential feedback, login/logout after the component refactor, and reload behavior.
+- [x] Configure /login, /register, and protected /applications routes; add the registration form and a signed-in placeholder.
+- [x] Exercise frontend registration, invalid credentials, login/logout, and route redirects in the browser.
+- [ ] Verify frontend reload behavior.
+- [ ] Build the applications tracker dashboard and connect it to the API.
 - [x] Align the login response and invalid-credentials status with the planned API contract.
 - [ ] Add authentication throttling.
 - [x] Add automated tests for the login response and generic login errors.

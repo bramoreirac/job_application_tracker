@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import Login from './pages/Login.jsx'
+import Applications from './pages/Applications.jsx'
+import Register from './pages/Register.jsx'
+import { Routes, Route, Navigate } from 'react-router'
 
 function App() {
   const [health, setHealth] = useState('Checking API…')
@@ -64,24 +67,52 @@ function App() {
       <h1>Job Application Tracker</h1>
       <p>Backend status: <strong>{health}</strong></p>
 
-      {token ? (
-        <>
-          <p role="status">{message}</p>
-          {error && <p role="alert">{error}</p>}
-          <button className="logout-button" type="button" onClick={handleLogout} disabled={isSubmitting}>
-            {isSubmitting ? 'Signing out…' : 'Sign out'}
-          </button>
-        </>
-      ) : (
-        <Login
-          message={message}
-          setMessage={setMessage}
-          onLogin={(newToken) => {
-            setToken(newToken)
-            setMessage('Signed in successfully.')
-          }}
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
+        <Route
+          path="/login"
+          element={
+            token ? (
+              <Navigate to="/applications" replace />
+            ) : (
+              <Login
+                message={message}
+                setMessage={setMessage}
+                onLogin={(newToken) => {
+                  setToken(newToken)
+                  setMessage('Signed in successfully.')
+                }}
+              />
+            )
+          }
         />
-      )}
+        <Route
+          path="/applications"
+          element={
+            token ? (
+              <Applications
+                message={message}
+                error={error}
+                isSubmitting={isSubmitting}
+                handleLogout={handleLogout}
+              />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            token ? (
+              <Navigate to="/applications" replace />
+            ) : (
+              <Register />
+            )
+          }
+        />
+      </Routes>
     </main>
   )
 }
