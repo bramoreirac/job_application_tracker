@@ -19,7 +19,7 @@ Read guide.md before implementation. It controls the learning workflow: one stag
 | Frontend hosting | Vercel Hobby | Personal noncommercial learning deployment |
 | Backend hosting | Render Free, Gunicorn WSGI | Run Python backend over HTTPS |
 
-Use a currently supported Django LTS release compatible with the chosen Python/DRF versions; verify official compatibility before installing. Pin resolved Python dependency versions and commit the frontend lockfile. Typical supporting packages: django-cors-headers, dj-database-url, psycopg with a compatible install option, python-dotenv, Gunicorn, and WhiteNoise for admin/static assets. Do not add packages without explaining their purpose.
+Use a currently supported Django LTS release compatible with the chosen Python/DRF versions; verify official compatibility before installing. The current installation is Django 6.1, so it differs from this LTS preference and should be reviewed before deployment. Pin resolved Python dependency versions and commit the frontend lockfile. Typical supporting packages: django-cors-headers, dj-database-url, psycopg with a compatible install option, python-dotenv, Gunicorn, and WhiteNoise for admin/static assets. Do not add packages without explaining their purpose.
 
 Use only free tiers. No paid instances, billable upgrades/add-ons, auto-converting trials, or purchased domains. Verify account eligibility, free project quotas, and current limits before provisioning. The previous project may already use account quotas; do not delete or reuse its data without authorization. Render Free databases are not selected: use Supabase Free PostgreSQL instead. If a free quota blocks progress, report the blocker and discuss a free alternative. Do not silently change stack or upgrade.
 
@@ -161,10 +161,10 @@ CORS allows exact frontend origins and Authorization/Content-Type; this token fl
 - [x] Add a React login form and logout handler with the token held in memory; install React Router and wrap the app in BrowserRouter.
 - [x] Configure /login, /register, and protected /applications routes; add the registration form and a signed-in placeholder.
 - [x] Exercise frontend registration, invalid credentials, login/logout, and route redirects in the browser.
-- [ ] Verify frontend reload behavior.
+- [x] Verify frontend reload behavior: reloading while signed in redirects to login.
 - [ ] Build the applications tracker dashboard and connect it to the API.
 - [x] Align the login response and invalid-credentials status with the planned API contract.
-- [ ] Add authentication throttling.
+- [x] Add shared anonymous authentication throttling for login and registration, with a focused limit test.
 - [x] Add automated tests for the login response and generic login errors.
 - [ ] Extend authentication tests to cover registration and token invalidation.
 

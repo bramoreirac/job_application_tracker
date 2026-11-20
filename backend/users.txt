@@ -1,0 +1,7 @@
+SUPERUSER
+user: braulio
+pass: Bm#227567
+
+USER
+user: raul
+pass: Rm#227567
