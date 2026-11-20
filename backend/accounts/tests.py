@@ -120,3 +120,51 @@ class RegisterTests(APITestCase):
             response.data,
             {"id": user.id, "username": self.username, "email": ""},
         )
+
+    def test_registration_rejects_mismatched_passwords(self):
+        response = self.client.post(
+            reverse("register"),
+            {
+                "username": self.username,
+                "password": self.password,
+                "password_confirm": "Synthetic-test-passphrase-227!",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("password_confirm", response.data)
+        self.assertFalse(
+            get_user_model().objects.filter(username=self.username).exists()
+        )
+
+    def test_registration_rejects_weak_password(self):
+        weak_password = "123"
+        response = self.client.post(
+            reverse("register"),
+            {
+                "username": self.username,
+                "password": weak_password,
+                "password_confirm": weak_password,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("password", response.data)
+        self.assertFalse(
+            get_user_model().objects.filter(username=self.username).exists()
+        )
+
+
+class CurrentUserTests(APITestCase):
+    def setUp(self):
+        cache.clear()
+
+    def test_request_without_token(self):
+        response = self.client.get(reverse("me"))
+        self.assertEqual(response.status_code, 401)
+
+    def test_request_with_invalid_token(self):
+        self.client.credentials(HTTP_AUTHORIZATION="Token invalid-token")
+
+        response = self.client.get(reverse("me"))
+        self.assertEqual(response.status_code, 401)

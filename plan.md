@@ -166,7 +166,7 @@ CORS allows exact frontend origins and Authorization/Content-Type; this token fl
 - [x] Align the login response and invalid-credentials status with the planned API contract.
 - [x] Add shared anonymous authentication throttling for login and registration, with a focused limit test.
 - [x] Add automated tests for the login response and generic login errors.
-- [ ] Extend authentication tests to cover registration and token invalidation.
+- [x] Extend authentication tests to cover successful registration, mismatched passwords, and token invalidation.
 
 ### 4. DRF CRUD
 - [ ] Write serializer and result-state validation.

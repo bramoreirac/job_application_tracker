@@ -7,7 +7,7 @@ A private job application tracker built step by step with React and Django. The 
 - **Stage 1 complete:** Django REST Framework serves `GET /api/health/`, and the React page fetches it and displays the backend status. Local CORS allows `http://localhost:5173`.
 - **Stage 2 complete:** the `applications` app has an `Application` model, an initial migration applied to local SQLite, and a completed synthetic ORM create/filter/update/delete exercise.
 - **Stage 3 in progress:** Django registration, token login, current-user, and logout endpoints are implemented with protected API defaults. React has login and registration pages, plus a protected `/applications` route with a signed-in placeholder and logout.
-- Registration and login have a shared anonymous throttle of 10 requests per minute. Automated tests cover that limit and the login contract. Local API and browser checks covered registration, login, logout, route redirects, token invalidation, and returning to login after a browser reload. Additional authentication tests remain to be written.
+- Registration and login have a shared anonymous throttle of 10 requests per minute. Automated tests cover that limit, the login contract, successful registration, mismatched passwords, and logout token invalidation. Local API and browser checks covered registration, login, logout, route redirects, token invalidation, and returning to login after a browser reload. Broader authentication and validation tests remain to be written.
 - Application API CRUD and the tracker dashboard, search, filters, hosted PostgreSQL, and deployment are still to be built.
 
 ## Stack
