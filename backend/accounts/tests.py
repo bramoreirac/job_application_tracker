@@ -1,8 +1,32 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.core.cache import cache
+from django.test import override_settings
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
+@override_settings(CACHES={
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "auth-throttle-tests",
+    },
+})
+
+class AuthenticationThrottleTests(APITestCase):
+    def setUp(self):
+        cache.clear()
+
+    def test_login_and_registration_share_limit(self):
+        for i in range(10):
+            if i < 5:
+                response = self.client.post("/api/auth/register/", {}, format="json")
+                self.assertEqual(response.status_code, 400)
+            else:
+                response = self.client.post("/api/auth/login/", {}, format="json")
+                self.assertEqual(response.status_code, 401)
+
+        response = self.client.post("/api/auth/login/", {}, format="json")
+        self.assertEqual(response.status_code, 429)
 
 class LoginContractTests(APITestCase):
     def setUp(self):

@@ -24,9 +24,13 @@ function Login({ message, setMessage, onLogin }) {
       )
 
       if (!response.ok) {
-        setError(response.status === 401
-          ? 'Unable to sign in. Check your credentials and try again.'
-          : 'Sign in is unavailable. Please try again later.')
+        if (response.status === 401) {
+          setError('Unable to sign in. Check your credentials and try again.')
+        } else if (response.status === 429) {
+          setError('Too many attempts. Please wait a minute to try again.')
+        } else {
+          setError('Sign in is unavailable. Please try again later.')
+        }
         return
       }
 

@@ -38,6 +38,8 @@ function Register() {
 				if (response.status === 400) {
 					setFieldErrors(data)
 					setError('Please correct the errors below.')
+				} else if (response.status === 429) {
+					setError('Too many attempts. Please wait a minute to try again.')
 				} else {
 					setError('Unable to register. Please try again later.')
 				}

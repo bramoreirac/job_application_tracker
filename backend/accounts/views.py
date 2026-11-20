@@ -1,14 +1,16 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import RegisterSerializer
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from .throttles import AuthenticationThrottle
 
 # Create your views here.
 @api_view(["POST"])
 @permission_classes([AllowAny])
+@throttle_classes([AuthenticationThrottle])
 def register(request):
     serializer = RegisterSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
@@ -22,6 +24,7 @@ def register(request):
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
+@throttle_classes([AuthenticationThrottle])
 def login_view(request):
     data = request.data
     username = data.get("username")

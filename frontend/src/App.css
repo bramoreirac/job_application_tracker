@@ -16,7 +16,8 @@
   color: var(--text-h);
 }
 
-.login-form {
+.login-form,
+.register-form {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -29,13 +30,16 @@
   text-align: left;
 }
 
-.login-form label {
+.login-form label,
+.register-form label {
   color: var(--text-h);
   font-size: 0.9rem;
 }
 
 .login-form input,
 .login-form button,
+.register-form input,
+.register-form button,
 .logout-button {
   box-sizing: border-box;
   min-height: 44px;
@@ -45,7 +49,8 @@
   font: inherit;
 }
 
-.login-form input {
+.login-form input,
+.register-form input {
   margin-bottom: 8px;
   color: var(--text-h);
   background: var(--bg);
@@ -53,12 +58,15 @@
 
 .login-form input:focus-visible,
 .login-form button:focus-visible,
+.register-form input:focus-visible,
+.register-form button:focus-visible,
 .logout-button:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
 
 .login-form button:disabled,
+.register-form button:disabled,
 .logout-button:disabled {
   color: var(--text);
   background: var(--code-bg);
