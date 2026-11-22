@@ -170,6 +170,8 @@ CORS allows exact frontend origins and Authorization/Content-Type; this token fl
 
 ### 4. DRF CRUD
 - [ ] Write serializer and result-state validation.
+  - [x] Expose model fields, reject supplied server-controlled fields, and restrict job URLs to HTTP/HTTPS; test these behaviors and text trimming.
+  - [ ] Enforce notes length, reject unsupported input fields, and validate status/date rules including partial updates; add focused tests.
 - [ ] Implement scoped list/create/detail/PATCH/delete.
 - [ ] Connect frontend form/list/edit/delete with loading and error handling.
 - [ ] Test two users and guessed IDs before expanding UI.
