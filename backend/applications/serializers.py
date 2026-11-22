@@ -1,9 +1,14 @@
-from rest_framework import serializers
-from .models import Application
+from collections.abc import Mapping
 from urllib.parse import urlsplit
+
+from rest_framework import serializers
+
+from .models import Application
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
+    notes = serializers.CharField(max_length=2000, required=False, allow_blank=True)
+
     class Meta:
         model = Application
         fields = [
@@ -23,12 +28,22 @@ class ApplicationSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "owner", "created_at", "updated_at"]
 
     def to_internal_value(self, data):
+        # Let DRF report its normal validation error for non-object input.
+        if not isinstance(data, Mapping):
+            return super().to_internal_value(data)
 
         errors = {
             field: "This field is controlled by the server"
             for field in self.Meta.read_only_fields
             if field in data
         }
+        errors.update(
+            {
+                field: "This field is not supported."
+                for field in data
+                if field not in self.fields
+            }
+        )
 
         if errors:
             raise serializers.ValidationError(errors)

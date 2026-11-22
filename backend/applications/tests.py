@@ -3,6 +3,18 @@ from .serializers import ApplicationSerializer
 
 
 class ApplicationSerializerTests(SimpleTestCase):
+    def test_rejects_unsupported_fields(self):
+        serializer = ApplicationSerializer(
+            data={
+                "company": "Example Company",
+                "role": "Developer",
+                "salary": 50000,
+            }
+        )
+
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("salary", serializer.errors)
+
     def test_rejects_server_controlled_fields(self):
         serializer = ApplicationSerializer(
             data={
@@ -70,3 +82,24 @@ class ApplicationSerializerTests(SimpleTestCase):
         )
 
         self.assertTrue(serializer.is_valid(), serializer.errors)
+
+    def test_notes_accept_2000_characters(self):
+        notes = "x" * 2000
+        serializer = ApplicationSerializer(
+            data={"company": "Example Company", "role": "Developer", "notes": notes}
+        )
+
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        self.assertEqual(serializer.validated_data["notes"], notes)
+
+    def test_notes_reject_more_than_2000_characters(self):
+        serializer = ApplicationSerializer(
+            data={
+                "company": "Example Company",
+                "role": "Developer",
+                "notes": "x" * 2001,
+            }
+        )
+
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("notes", serializer.errors)
