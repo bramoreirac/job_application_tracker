@@ -4,6 +4,8 @@ from .models import Application
 from datetime import date, timedelta
 from zoneinfo import ZoneInfo
 from django.utils import timezone
+from datetime import datetime, timezone as datetime_timezone
+from unittest.mock import patch
 
 
 class ApplicationSerializerTests(SimpleTestCase):
@@ -206,7 +208,7 @@ class ApplicationSerializerTests(SimpleTestCase):
         self.assertEqual(serializer.validated_data["status"], "applied")
         self.assertEqual(serializer.validated_data["applied_on"], date(2026, 1, 1))
 
-    def test_calculate_tomorrow_managua(self):
+    def test_rejects_applied_date_tomorrow_managua(self):
 
         tomorrow = timezone.now().astimezone(
             ZoneInfo("America/Managua")
@@ -218,6 +220,81 @@ class ApplicationSerializerTests(SimpleTestCase):
                 "role": "Developer",
                 "status": "applied",
                 "applied_on": tomorrow.isoformat(),
+            }
+        )
+
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("applied_on", serializer.errors)
+
+    @patch("applications.serializers.timezone.now")
+    def test_accepts_applied_date_today_managua(self, mock_now):
+        mock_now.return_value = datetime(2026, 1, 2, 3, 0, tzinfo=datetime_timezone.utc)
+
+        today = timezone.now().astimezone(ZoneInfo("America/Managua")).date()
+
+        serializer = ApplicationSerializer(
+            data={
+                "company": "Example Company",
+                "role": "Developer",
+                "status": "applied",
+                "applied_on": today.isoformat(),
+            }
+        )
+
+        self.assertTrue(serializer.is_valid())
+        self.assertIn("applied_on", serializer.validated_data)
+        self.assertEqual(today, date(2026, 1, 1))
+
+    def test_rejects_invalid_status_and_work_mode(self):
+        serializer = ApplicationSerializer(
+            data={
+                "company": "Example Company",
+                "role": "Developer",
+                "status": "unknown",
+                "work_mode": "spaceship",
+            }
+        )
+
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("status", serializer.errors)
+        self.assertIn("work_mode", serializer.errors)
+
+    def test_accepts_interviewing_without_application_date(self):
+        serializer = ApplicationSerializer(
+            data={
+                "company": "Example Company",
+                "role": "Developer",
+                "status": "interviewing",
+                "applied_on": None,
+            }
+        )
+
+        self.assertTrue(serializer.is_valid())
+        self.assertEqual(serializer.validated_data["applied_on"], None)
+
+    def test_partial_company_update_omits_unchanged_fields(self):
+        application = Application(
+            status="applied",
+            applied_on=date(2026, 1, 1),
+        )
+
+        serializer = ApplicationSerializer(
+            instance=application,
+            data={"company": "Updated Company"},
+            partial=True,
+        )
+
+        self.assertTrue(serializer.is_valid())
+        self.assertEqual(serializer.validated_data["company"], "Updated Company")
+        self.assertNotIn("status", serializer.validated_data)
+        self.assertNotIn("applied_on", serializer.validated_data)
+
+    def test_rejects_date_when_status_defaults_to_saved(self):
+        serializer = ApplicationSerializer(
+            data={
+                "company": "Example Company",
+                "role": "Developer",
+                "applied_on": "2026-01-01",
             }
         )
 
