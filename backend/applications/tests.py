@@ -1,5 +1,9 @@
 from django.test import SimpleTestCase
 from .serializers import ApplicationSerializer
+from .models import Application
+from datetime import date, timedelta
+from zoneinfo import ZoneInfo
+from django.utils import timezone
 
 
 class ApplicationSerializerTests(SimpleTestCase):
@@ -103,3 +107,119 @@ class ApplicationSerializerTests(SimpleTestCase):
 
         self.assertFalse(serializer.is_valid())
         self.assertIn("notes", serializer.errors)
+
+    def test_status_and_application_date_rule(self):
+        serializer = ApplicationSerializer(
+            data={
+                "company": "Example Company",
+                "role": "Developer",
+                "status": "saved",
+                "applied_on": "2026-01-01",
+            }
+        )
+
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("applied_on", serializer.errors)
+
+    def test_rejects_saved_then_patch_date_only(self):
+        application = Application(
+            company="Example Company",
+            role="Developer",
+            status="saved",
+            applied_on=None,
+        )
+
+        serializer = ApplicationSerializer(
+            instance=application,
+            data={"applied_on": "2026-01-01"},
+            partial=True,
+        )
+
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("applied_on", serializer.errors)
+
+    def test_rejects_patch_to_saved_without_clearing_date(self):
+        application = Application(
+            company="Example Company",
+            role="Developer",
+            status="applied",
+            applied_on=date(2026, 1, 1),
+        )
+
+        serializer = ApplicationSerializer(
+            instance=application,
+            data={"status": "saved"},
+            partial=True,
+        )
+
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("applied_on", serializer.errors)
+
+    def test_accepts_patch_to_saved_with_none_date(self):
+        application = Application(
+            company="Example Company",
+            role="Developer",
+            status="applied",
+            applied_on=date(2026, 1, 1),
+        )
+
+        serializer = ApplicationSerializer(
+            instance=application,
+            data={"status": "saved", "applied_on": None},
+            partial=True,
+        )
+
+        self.assertTrue(serializer.is_valid())
+        self.assertEqual(serializer.validated_data["applied_on"], None)
+
+    def test_rejects_saved_to_applied_without_date(self):
+        application = Application(
+            company="Example Company",
+            role="Developer",
+            status="saved",
+            applied_on=None,
+        )
+
+        serializer = ApplicationSerializer(
+            instance=application,
+            data={"status": "applied"},
+            partial=True,
+        )
+
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("applied_on", serializer.errors)
+
+    def test_accepts_saved_to_applied_with_date(self):
+        application = Application(
+            company="Example Company",
+            role="Developer",
+            status="saved",
+            applied_on=None,
+        )
+        serializer = ApplicationSerializer(
+            instance=application,
+            data={"status": "applied", "applied_on": "2026-01-01"},
+            partial=True,
+        )
+
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        self.assertEqual(serializer.validated_data["status"], "applied")
+        self.assertEqual(serializer.validated_data["applied_on"], date(2026, 1, 1))
+
+    def test_calculate_tomorrow_managua(self):
+
+        tomorrow = timezone.now().astimezone(
+            ZoneInfo("America/Managua")
+        ).date() + timedelta(days=1)
+
+        serializer = ApplicationSerializer(
+            data={
+                "company": "Example Company",
+                "role": "Developer",
+                "status": "applied",
+                "applied_on": tomorrow.isoformat(),
+            }
+        )
+
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("applied_on", serializer.errors)
