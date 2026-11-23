@@ -8,4 +8,7 @@
 **/node_modules/
 **/dist/
 **/staticfiles/
+
 /guide.md
+
+.vscode/
