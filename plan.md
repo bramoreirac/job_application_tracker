@@ -172,9 +172,12 @@ CORS allows exact frontend origins and Authorization/Content-Type; this token fl
 - [x] Write serializer and initial result-state validation.
   - [x] Expose model fields, reject supplied server-controlled fields, and restrict job URLs to HTTP/HTTPS; test these behaviors and text trimming.
   - [x] Enforce notes length, reject unsupported input fields, and validate status/date rules including partial updates; add focused tests.
-- [ ] Implement scoped list/create/detail/PATCH/delete.
+- [x] Implement owner-scoped list/create and detail views and connect their URLs; assign the owner on create.
+- [x] Test list/create ownership and authentication, rejection of a supplied owner, and retrieval of an owned record.
+- [ ] Test detail access across users, PATCH and delete behavior, including status/date transitions and unauthenticated access.
 - [ ] Connect frontend form/list/edit/delete with loading and error handling.
 - [ ] Test two users and guessed IDs before expanding UI.
+- [ ] Set up a SQLite viewer; the Django schema viewer has been configured locally.
 
 ### 5. Search, filters, summary, pagination
 - [ ] Implement scoped queries and status counts.

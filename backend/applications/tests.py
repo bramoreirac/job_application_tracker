@@ -1,4 +1,7 @@
 from django.test import SimpleTestCase
+from django.contrib.auth import get_user_model
+from django.urls import reverse
+from rest_framework.test import APITestCase
 from .serializers import ApplicationSerializer
 from .models import Application
 from datetime import date, timedelta
@@ -300,3 +303,97 @@ class ApplicationSerializerTests(SimpleTestCase):
 
         self.assertFalse(serializer.is_valid())
         self.assertIn("applied_on", serializer.errors)
+
+
+class ApplicationAPITests(APITestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username="application_test",
+            password="Synthetic-test-passphrase-123!",
+        )
+        self.client.force_authenticate(user=self.user)
+        self.url = reverse("application-list-create")
+
+    def test_create_assigns_authenticated_user_as_owner(self):
+        response = self.client.post(
+            self.url,
+            {"company": "Example Company", "role": "Developer"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 201)
+        application = Application.objects.get(pk=response.data["id"])
+        self.assertEqual(application.owner, self.user)
+
+    def test_list_returns_only_authenticated_users_applications(self):
+        other_user = get_user_model().objects.create_user(
+            username="other_user",
+            password="Synthetic-test-passphrase-456!",
+        )
+
+        own_application = Application.objects.create(
+            owner=self.user,
+            company="My Company",
+            role="Developer",
+        )
+
+        Application.objects.create(
+            owner=other_user,
+            company="Other Company",
+            role="Designer",
+        )
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["id"], str(own_application.id))
+
+    def test_list_requires_authentication(self):
+        self.client.force_authenticate(user=None)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 401)
+
+    def test_create_requires_authentication(self):
+        self.client.force_authenticate(user=None)
+
+        response = self.client.post(
+            self.url,
+            {"company": "Example Company", "role": "Developer"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(Application.objects.count(), 0)
+
+    def test_create_rejects_client_supplied_owner(self):
+        other_user = get_user_model().objects.create_user(
+            username="other_user",
+            password="Synthetic-test-passphrase-456!",
+        )
+
+        response = self.client.post(
+            self.url,
+            {"company": "Example Company", "role": "Developer", "owner": other_user.id},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Application.objects.count(), 0)
+        self.assertIn("owner", response.data)
+
+    def test_retrieve_own_application(self):
+        application = Application.objects.create(
+            owner=self.user,
+            company="My Company",
+            role="Developer",
+        )
+        url = reverse("application-detail", kwargs={"pk": application.pk})
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["id"], str(application.id))
+        self.assertEqual(response.data["company"], "My Company")
