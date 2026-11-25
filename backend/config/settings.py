@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'applications.apps.ApplicationsConfig',
     'accounts.apps.AccountsConfig',
     'rest_framework.authtoken',
+    'schema_viewer',
 ]
 
 MIDDLEWARE = [
