@@ -92,6 +92,7 @@ function App() {
           element={
             token ? (
               <Applications
+                token={token}
                 message={message}
                 error={error}
                 isSubmitting={isSubmitting}
