@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import './App.css'
 import Login from './pages/Login.jsx'
 import Applications from './pages/Applications.jsx'
@@ -11,6 +11,11 @@ function App() {
   const [error, setError] = useState('')
   const [token, setToken] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSessionExpired = useCallback(() => {
+    setToken(null)
+    setMessage('Your session has ended. Please sign in again.')
+  }, [])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -97,6 +102,7 @@ function App() {
                 error={error}
                 isSubmitting={isSubmitting}
                 handleLogout={handleLogout}
+                onSessionExpired={handleSessionExpired}
               />
             ) : (
               <Navigate to="/login" replace />

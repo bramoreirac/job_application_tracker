@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 
 
-function Applications({ token, message, error, isSubmitting, handleLogout }) {
+function Applications({ token, message, error, isSubmitting, handleLogout, onSessionExpired }) {
 
 	const [applications, setApplications] = useState([])
 	const [isLoading, setIsLoading] = useState(true)
+	const [loadError, setLoadError] = useState('')
 
 	useEffect(() => {
 		const controller = new AbortController()
@@ -19,13 +20,17 @@ function Applications({ token, message, error, isSubmitting, handleLogout }) {
 					},
 				)
 
+				if (response.status === 401) {
+					onSessionExpired()
+					return
+				}
 				if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
 				const data = await response.json()
 				setApplications(data)
 			} catch (error) {
 				if (error.name !== 'AbortError') {
-					console.error('Unable to load applications:', error)
+					setLoadError('Unable to load applications. Please try again.')
 				}
 			} finally {
 				if (!controller.signal.aborted) {
@@ -36,7 +41,7 @@ function Applications({ token, message, error, isSubmitting, handleLogout }) {
 
 		loadApplications()
 		return () => controller.abort()
-	}, [token])
+	}, [token, onSessionExpired])
 
 	return (
 		<div>
@@ -53,6 +58,10 @@ function Applications({ token, message, error, isSubmitting, handleLogout }) {
 
 			<h2>My applications</h2>
 			{isLoading && <p>Loading Applications...</p>}
+			{loadError && <p role="alert">{loadError}</p>}
+			{!isLoading && !loadError && applications.length === 0 && (
+				<p>No applications yet.</p>
+			)}
 			<ul>
 				{applications.map((application) => (
 					<li key={application.id}>
